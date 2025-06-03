@@ -85,7 +85,7 @@ def classify_lease(extracted_text: str, openai_api_key: str) -> Dict[str, Any]:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are an expert lease accounting analyst specializing in ASC 842 lease classification. Provide thorough, accurate analysis with supporting evidence from the lease document."},
+                {"role": "system", "content": "You are an expert lease accounting analyst specializing in ASC 842 lease classification. Provide thorough, accurate analysis with supporting evidence from the lease document. NEVER GUESS OR MAKE ANYTHING UP. ALL ANALYSIS SHOULD BE SUPPORTED WITH EVIDENCE"},
                 {"role": "user", "content": analysis_prompt}
             ],
             temperature=0,
