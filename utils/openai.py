@@ -51,7 +51,7 @@ def classify_lease(extracted_text: str, openai_api_key: str) -> Dict[str, Any]:
                 "description_of_premises": "description of the premises or description of rentable space",
                 "lease_term": "lease term period of the lease in months as an integer",
                 "execution_date": "lease execution or signing date in the format YYYY-MM-DD",
-                "discount_rate": "annual discount rate as a float or return 'IBR', A lessee should use the rate implicit in the lease whenever that rate is readily determinable. If the rate implicit in the lease is not readily determinable, a lessee uses its incremental borrowing rate. A lessee that is not a public business entity is permitted to use a risk-free discount rate for the lease instead of its incremental borrowing rate, determined using a period comparable with that of the lease term, as an accounting policy election made by class of underlying asset for all leases",
+                "discount_rate": "annual discount rate as a float or return -1, A lessee should use the rate implicit in the lease whenever that rate is readily determinable. If the rate implicit in the lease is not readily determinable, a lessee uses its incremental borrowing rate. A lessee that is not a public business entity is permitted to use a risk-free discount rate for the lease instead of its incremental borrowing rate, determined using a period comparable with that of the lease term, as an accounting policy election made by class of underlying asset for all leases",
                 "lease_start_date": "lease start date in the format YYYY-MM-DD",
                 "commencement_date": "lease commencement date meaning the date of access per the lease, if none found, use lease start date. Also check to see If the lease notes that access is granted upon execution then utilize the signing date. Date should be in the format YYYY-MM-DD",
                 "purchase_options": "whether there is a purchase option (yes/no)",
@@ -402,7 +402,7 @@ Validation Summary:
 
     return formatted_result, quotes_df
 
-def extract_primary_inputs(results: Dict[str, Any], measurement_date: str = "4/1/2025", annual_discount_rate: float = 9.08) -> pd.DataFrame:
+def extract_primary_inputs(results: Dict[str, Any], measurement_date, annual_discount_rate ) -> pd.DataFrame:
     """
     Extracts primary inputs needed for lease accounting calculations from the classification results.
 
@@ -539,9 +539,6 @@ def format_classification_results(results: Dict[str, Any]) -> Tuple[str, pd.Data
     df = pd.DataFrame(columns=["Terms and Conditions", "Information"])
     payment_df = pd.DataFrame(columns=["Date", "Lease Payment"])
     payment_df.index.name = "Period"
-    
-    # Create primary inputs DataFrame
-    primary_inputs_df = extract_primary_inputs(results)
 
     if "error" in results:
         error_msg = f"❌ Error in Analysis\n\n{results.get('reasoning', 'Unknown error occurred')}"
@@ -550,7 +547,7 @@ def format_classification_results(results: Dict[str, Any]) -> Tuple[str, pd.Data
             "Terms and Conditions": ["Error"],
             "Information": [results.get('reasoning', 'Unknown error occurred')]
         })
-        return error_msg, error_df, payment_df, primary_inputs_df
+        return error_msg, error_df, payment_df, pd.DataFrame()
 
     classification = results.get('classification', 'Unknown')
     confidence = results.get('confidence', 'Unknown')
@@ -677,6 +674,11 @@ Analysis Summary:
                         # If conversion fails, just add $ prefix if not already there
                         if not clean_value.startswith('$') and clean_value not in ["Not specified", "N/A", "", "None", "HELP_DECIDING"]:
                             clean_value = f"${clean_value}"
+            elif key in ["discount_rate"]:
+                dis_rate_value = int(clean_value) if clean_value.isdigit() else 0 ##TODO: handle string values and do IBR analysis
+            elif key in ["commencement_date"]:
+                comm_date_value = clean_value
+
             
             # Add to formatted result
             formatted_result += f"    • {display_name}: {clean_value}\n"
@@ -709,5 +711,5 @@ Analysis Summary:
 
     # Create DataFrame from rows
     df = pd.DataFrame(df_rows)
-
+    primary_inputs_df = extract_primary_inputs(results,  measurement_date = comm_date_value, annual_discount_rate=dis_rate_value)
     return formatted_result, df, payment_df, primary_inputs_df
