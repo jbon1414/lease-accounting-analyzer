@@ -63,7 +63,7 @@ def classify_lease(extracted_text: str, openai_api_key: str) -> Dict[str, Any]:
                 "prepaid_rent": "Prepaid Rent Amount if specified, if not specified then 'N/A' but if there is some mention but you are unsure then use 'HELP_DECIDING' and explain what you need to know",
                 "monthly_payment": "Amount to be paid monthly as a integar or float. If it is paid Yearly then add a (YEARLY PAYMENT) note to the end of the amount.",
                 "rent_deescalation": "Rent De-escalation Clause if specified, if not specified then'N/A' but if there is some mention but you are unsure then use 'HELP_DECIDING' and explain what you need to know",
-                "monthly_payment_list": "python dictionary of monthly payments with any increases calculated for each month rent will be paid. aka payments per each date in the lease term (ie monthly payment amount by month). All dates should be in the format YYYY-MM-DD. If only yearly payments are specified then use the first day of each month.",
+                "monthly_payment_list": "python dictionary of monthly payments with any increases calculated for each month rent will be paid. aka payments per each date in the lease term starting with the lease start date (which can be other than the first of the month unless specified) (ie monthly payment amount by month). All dates should be in the format YYYY-MM-DD.",
                 "percentage_rent": "whether there is percentage rent where part of rent owed is based on the sales or other determinable factors outlined in the lease (yes/no)",
                 "maintenance": "description of maintenance terms and who is responsible for maintenance",
                 "utilities": "description of utilities terms and who is responsible for utilities",
