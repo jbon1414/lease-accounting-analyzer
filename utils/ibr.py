@@ -63,8 +63,8 @@ def build_ibr_df(commencement_date, end_date, discount_rate):
     Build a DataFrame with the IBR data.
     """
     # Convert dates to datetime objects
-    commencement_date = pd.to_datetime(commencement_date)
-    end_date = pd.to_datetime(end_date)
+    commencement_date = pd.to_datetime(commencement_date).dt.date
+    end_date = pd.to_datetime(end_date).dt.date
 
     ibr_df = pd.DataFrame({
         'Lease Commencement Date': [commencement_date],
