@@ -69,7 +69,7 @@ def build_ibr_df(commencement_date, end_date, discount_rate):
     ibr_df = pd.DataFrame({
         'Lease Commencement Date': [commencement_date],
         'Lease End Date': [end_date],
-        'Remainging Lease Term (Years)': [(end_date - commencement_date).days / 365],
+        'Remaining Lease Term (Years)': [(end_date - commencement_date).days / 365],
         'Lease risk-free rate': [discount_rate],
         'Company risk premium': [0.0],  # Placeholder for risk premium
         'Lease Incremental Borrowing Rate': [discount_rate + 0.0]  # Placeholder for IBR calculation
