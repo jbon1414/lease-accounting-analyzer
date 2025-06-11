@@ -1,8 +1,11 @@
 import openpyxl
+import os
 
 
 def create_workbook(measurement_date, end_date, lease_length, discount_rate, classification, period_list, date_list, payment_list):
-    wb = openpyxl.load_workbook(r"Lease Template 2.0.xlsx")
+    current_dir = os.path.dirname(__file__)
+    excel_path = os.path.join(current_dir, 'Lease Template 2.0.xlsx')
+    wb = openpyxl.load_workbook(excel_path)
     ws = wb.active 
 
     # Example: update row 2 and 5 (columns B and C)
