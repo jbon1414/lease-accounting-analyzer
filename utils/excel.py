@@ -14,12 +14,12 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
         6: {'C': end_date},
         7: {'C': lease_length},
         8: {'C': discount_rate/100},
-        9: {'C': discount_rate/12},
+        9: {'C': (discount_rate/100)/12},
         10: {'C': 0},
         11: {'C': 0},
         12: {'C': 0},
         13: {'C': 'Beginning'},
-        14: {'C': classification}
+        14: {'C': classification.lower().title()}
 
     }
     b_list=period_list
