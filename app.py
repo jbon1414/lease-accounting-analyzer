@@ -2,11 +2,25 @@ import streamlit as st
 from datetime import date
 import tempfile
 import pandas as pd
+import openpyxl
+from io import BytesIO
 
 from nodes import app, State
 from nodes_2 import app_2, State2
 from utils.pdf_reading import extract_text_from_pdf
 from utils.ibr import build_ibr_df
+from utils.excel import *
+
+
+if 'result' not in st.session_state:
+    st.session_state['result'] = None
+
+if 'result_2' not in st.session_state:
+    st.session_state['result_2'] = None
+
+if 'wb' not in st.session_state:
+    st.session_state['wb'] = None
+
 
 st.set_page_config(
     page_title="ASC 842 Lease Classification",
@@ -71,19 +85,23 @@ if st.button("Start Classification Process", type="primary"):
         
         method, extracted_text = extract_text_from_pdf(tmp_file_path, verbose=False)
 
-        status_text.text("Text from PDF extracted...")
         progress_bar.progress(10)
+        status_text.text("Text from PDF extracted...")
 
         state_input = {"text": extracted_text}
 
         result = app_instance.invoke(state_input)
 
+        # Save data to session_state
+        st.session_state['result'] = result
+
+
         st.write("Classification:", result["classification"])
 
         st.write("\nDiscount Rate:", result["discount_rate"])
 
-        status_text.text("Building Worksheets...")
         progress_bar.progress(90)
+        status_text.text("Building Worksheets...")
 
         st.write("IBR Calculation:")
         st.data_editor(build_ibr_df((result["dates"]["commencement_date"]),
@@ -117,12 +135,15 @@ if st.button("Start Classification Process", type="primary"):
         payments_df['PV Lease Payment'] = (payments_df['Lease Payment'] / ((1 + (result['discount_rate']/100)/12) ** (payments_df['Period']))).round(2)
         initial_lease_liability = payments_df['PV Lease Payment'].sum()
 
+
         st.dataframe(payments_df, use_container_width=True)
 
         status_text.text("Gathering Terms and Conditions...")
         progress_bar.progress(66)
 
         result_2 = app_2_instance.invoke(state_input)
+        st.session_state['result_2'] = result_2
+        
 
         st.write("Terms and Conditions:")
         st.json(result_2['terms_conditions_details'], expanded=True)
@@ -133,7 +154,32 @@ if st.button("Start Classification Process", type="primary"):
         st.write("Terms and Conditions Additional Terms:")
         st.json(result_2['terms_conditions_additional'], expanded=True)
 
+
+        status_text.text("Building Excel Workbook...")
+        progress_bar.progress(80)
+
+        wb = create_workbook(
+            result['dates']['start_date'],
+            result['dates']['end_date'], 
+            len(result['dates']['payment_dates']), 
+            result["discount_rate"],
+            result['classification'],
+            [x for x in range(len(result['dates']['payment_dates']))], 
+            list(result['dates']['payment_dates'].keys()), 
+            list(result['dates']['payment_dates'].values()))
+        st.session_state['wb'] = wb
+
+        if 'wb' in st.session_state:
+            output = BytesIO()
+            st.session_state['wb'].save(output)
+            output.seek(0)
+
+            st.download_button(
+                label="📥 Download Excel Workbook",
+                data=output,
+                file_name="lease_classification.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
         progress_bar.progress(100)
-
-
-
+        status_text.text("Done!")
