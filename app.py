@@ -71,8 +71,8 @@ if st.button("Start Classification Process", type="primary"):
         
         method, extracted_text = extract_text_from_pdf(tmp_file_path, verbose=False)
 
-        progress_bar.progress(10)
         status_text.text("Text from PDF extracted...")
+        progress_bar.progress(10)
 
         state_input = {"text": extracted_text}
 
@@ -82,8 +82,8 @@ if st.button("Start Classification Process", type="primary"):
 
         st.write("\nDiscount Rate:", result["discount_rate"])
 
-        progress_bar.progress(90)
         status_text.text("Building Worksheets...")
+        progress_bar.progress(90)
 
         st.write("IBR Calculation:")
         st.data_editor(build_ibr_df((result["dates"]["commencement_date"]),
