@@ -9,7 +9,7 @@ from langchain.schema import HumanMessage
 from langchain_openai import ChatOpenAI # connected to OpenAI
 
 from utils.dict import parse_llm_response_to_dict, extract_classification
-from utils.ibr import calculate_dicount_rate
+from utils.ibr import *
 
 llm = ChatOpenAI(model="gpt-4o", temperature=0.0, max_tokens=4000, openai_api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -17,6 +17,7 @@ llm = ChatOpenAI(model="gpt-4o", temperature=0.0, max_tokens=4000, openai_api_ke
 class State(TypedDict):
 
     text: str #stores the original input text
+    rent_abatement: dict #details about rent abatement
     classification: str #represents the lease classification result (e.g., "OPERATING", "FINANCE")
     dates: dict #stores a summarized version of the text
     discount_rate: float #stores the discount rate for present value calculations
@@ -58,7 +59,7 @@ def classification_node(state: State) -> State:
 
 def dates_node(state: State) -> State:
     prompt = PromptTemplate(
-        input_variables=["text"],
+        input_variables=["text", "rent_abatement"],
         template="""
         You are a lease accounting expert analyzing a lease document to determine its classification under ASC 842.
 
@@ -67,15 +68,22 @@ def dates_node(state: State) -> State:
         - 'end_date': The end date of the lease as a string in the format 'YYYY-MM-DD'.
         - 'commencement_date': The commencement date of the lease as a string in the format 'YYYY-MM-DD'.
         - 'execution_date': lease execution or signing date as a string in the format 'YYYY-MM-DD'.
-        - 'payment_dates': A python dictionary with keys as every payment date (PER MONTH UNLESS OTHERWISE STATED) as strings in the format 'YYYY-MM-DD' and values as the amount of the payment with ANY % INCREASE ALREADY CALCULATED as a float.
+        - 'payment_dates': A python dictionary with keys as every payment date (PER MONTH UNLESS OTHERWISE STATED) as strings in the format 'YYYY-MM-DD' and values as the amount of the payment with ANY % INCREASE ALREADY CALCULATED as a float. Please factor in any rent abatement periods and provide the payment amount for each month, even if it is zero based on the rent concessions: {rent_abatement}.
+        
+        IMPORTANT: When calculating payment_dates, carefully consider the rent concessions provided. If there are free rent periods, rent reductions, or other concessions, adjust the monthly payment amounts accordingly. For months with rent abatement, set the payment amount to 0.0.
         
         Return only valid JSON without any additional text or formatting.
 
         Text to analyze: {text}
+        
+        Rent Concessions to consider: {rent_abatement}
         """
     )
 
-    message = HumanMessage(content=prompt.format(text=state["text"]))
+    message = HumanMessage(content=prompt.format(
+        text=state["text"], 
+        rent_abatement=state["rent_abatement"]
+    ))
     raw_response = llm.invoke([message]).content.strip()
 
     # Handle the dictionary response and ensure it is in the correct format
@@ -111,7 +119,7 @@ def discount_rate_node(state: State) -> State:
     discount_rate = float(llm.invoke([message]).content.strip())
 
     if discount_rate == 0:
-        discount_rate, treasure_df = calculate_dicount_rate(
+        discount_rate, treasure_df = calculate_discount_rate(
             state['dates']['commencement_date'], 
             len(state['dates']['payment_dates'])
         )
