@@ -217,6 +217,7 @@ if st.button("Start Classification Process", type="primary"):
             [x for x in range(len(result['dates']['payment_dates']))], 
             list(result['dates']['payment_dates'].keys()), 
             list(result['dates']['payment_dates'].values()),
+            result_2,
             0,
             -float(result_2['terms_conditions_additional']["Lease Incentives"]['amount']),
             float(result_2['terms_conditions_options']["Prepaid Rent"]['amount']),
