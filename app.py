@@ -10,7 +10,6 @@ from utils.pdf_reading import extract_text_from_pdf
 from utils.ibr import *
 from utils.excel import *
 
-
 if 'result' not in st.session_state:
     st.session_state['result'] = None
 
@@ -26,7 +25,9 @@ st.set_page_config(
     page_icon="📋",
     layout="wide"
 )
-
+current_dir = os.path.dirname(__file__)
+image_path = os.path.join(current_dir, r'The Glenwood Group-02.png')
+st.image(image_path, width=400)
 st.title("ASC 842 Lease Classification Tool")
 
 # PDF file uploader
