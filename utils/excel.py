@@ -2,7 +2,7 @@ import openpyxl
 import os
 
 
-def create_workbook(measurement_date, end_date, lease_length, discount_rate, classification, period_list, date_list, payment_list):
+def create_workbook(measurement_date, end_date, lease_length, discount_rate, classification, period_list, date_list, payment_list, initial_direct_costs=0, incentives=0, prepaid_rent=0, payment_period='Beginning'):
     current_dir = os.path.dirname(__file__)
     excel_path = os.path.join(current_dir, 'Lease Template 2.0.xlsx')
     wb = openpyxl.load_workbook(excel_path)
@@ -15,11 +15,11 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
         7: {'C': lease_length},
         8: {'C': discount_rate/100},
         9: {'C': (discount_rate/100)/12},
-        10: {'C': 0},
-        11: {'C': 0},
-        12: {'C': 0},
-        13: {'C': 'Beginning'},
-        14: {'C': classification.lower().title()}
+        10: {'C': initial_direct_costs},
+        11: {'C': incentives},
+        12: {'C': prepaid_rent},
+        13: {'C': payment_period},
+        14: {'C': classification}
 
     }
     b_list=period_list
