@@ -168,6 +168,14 @@ if st.button("Start Classification Process", type="primary"):
             st.write("Debt Information:")
             st.dataframe(debt_df, use_container_width=True, hide_index=True)
         st.data_editor(ibr_df, use_container_width=True, hide_index=True)
+
+        start_date_str = result['dates']['start_date']
+        start_date = pd.to_datetime(start_date_str)
+
+        if start_date.day <= 15:
+            p_p = "Beginning"
+        else:
+            p_p = "Ending"
         
         primary_inputs = pd.DataFrame([[
             result['dates']['start_date'],
@@ -178,7 +186,7 @@ if st.button("Start Classification Process", type="primary"):
             float(result_2['terms_conditions_additional']["Initial Direct Costs"]['amount']),
             -float(result_2['terms_conditions_additional']["Lease Incentives"]['amount']),
             float(result_2['terms_conditions_options']["Prepaid Rent"]['amount']),
-            'Beginning',
+            p_p,
             result['classification']
         ]], columns=[
             'Measurement Date',
@@ -219,6 +227,7 @@ if st.button("Start Classification Process", type="primary"):
             list(result['dates']['payment_dates'].keys()), 
             list(result['dates']['payment_dates'].values()),
             result_2,
+            ibr_df, debt_df,
             float(result_2['terms_conditions_additional']["Initial Direct Costs"]['amount']),
             -float(result_2['terms_conditions_additional']["Lease Incentives"]['amount']),
             float(result_2['terms_conditions_options']["Prepaid Rent"]['amount']),
