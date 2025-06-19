@@ -175,7 +175,7 @@ if st.button("Start Classification Process", type="primary"):
             len(result['dates']['payment_dates']),
             result["discount_rate"],
             ((float(result['discount_rate'])/100)/12),
-            0,
+            float(result_2['terms_conditions_additional']["Initial Direct Costs"]['amount']),
             -float(result_2['terms_conditions_additional']["Lease Incentives"]['amount']),
             float(result_2['terms_conditions_options']["Prepaid Rent"]['amount']),
             'Beginning',
@@ -219,7 +219,7 @@ if st.button("Start Classification Process", type="primary"):
             list(result['dates']['payment_dates'].keys()), 
             list(result['dates']['payment_dates'].values()),
             result_2,
-            0,
+            float(result_2['terms_conditions_additional']["Initial Direct Costs"]['amount']),
             -float(result_2['terms_conditions_additional']["Lease Incentives"]['amount']),
             float(result_2['terms_conditions_options']["Prepaid Rent"]['amount']),
             'Beginning'
