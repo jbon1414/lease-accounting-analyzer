@@ -112,6 +112,7 @@ def build_ibr_df(commencement_date, end_date, discount_rate, has_debt=False, deb
         debt_df['Term (Years)'] = (pd.to_datetime(debt_df['end_date']) - pd.to_datetime(debt_df['measurement_date'])).dt.days / 365
         debt_df['Company Risk-Free Rate'] = pd.to_numeric('discount_rate', errors='coerce')
         debt_df['Company Risk Premium'] = debt_df['discount_rate']-debt_df['Company Risk-Free Rate']
+        risk_premium = debt_df['discount_rate']-debt_df['Company Risk-Free Rate']
     else:
         risk_premium = 0.0
         debt_df = None
