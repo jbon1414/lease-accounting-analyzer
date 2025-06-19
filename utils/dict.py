@@ -514,22 +514,22 @@ def extract_lease_additional_terms_dict(response: str) -> Dict[str, Any]:
             'Taxes and Insurance': {'value': None, 'proof': None, 'section': None},
             'Brokerage Commissions': {
                 'value': None, 'proof': None, 'section': None,
-                'amount': None, 'responsible party': None
+                'amount': 0.0, 'responsible party': None
             },
             'Lease Incentives': {
                 'value': None, 'proof': None, 'section': None,
-                'amount': None, 'description': None
+                'amount': 0.0, 'description': None
             },
             'Rent Concessions': {
                 'value': None, 'proof': None, 'section': None,
-                'amount': None, 'description': None
+                'amount': 0.0, 'description': None
             },
             'Initial Direct Costs': {
                 'value': None, 'proof': None, 'section': None,
-                'amount': None
+                'amount': 0.0
             },
             'Tenant Improvements': {
                 'value': None, 'proof': None, 'section': None,
-                'amount': None, 'description': None
+                'amount': 0.0, 'description': None
             }
         }
