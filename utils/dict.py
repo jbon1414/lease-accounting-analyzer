@@ -412,8 +412,15 @@ def extract_lease_additional_terms_dict(response: str) -> Dict[str, Any]:
         # Parse JSON
         parsed_dict = json.loads(cleaned_response)
         
-        # Validate expected keys and structure
-        expected_keys = ['Taxes and Insurance', 'Brokerage Commissions', 'Lease Incentives', 'Rent Concessions']
+        # Updated expected keys to include the new ones
+        expected_keys = [
+            'Taxes and Insurance', 
+            'Brokerage Commissions', 
+            'Lease Incentives', 
+            'Rent Concessions',
+            'Initial Direct Costs',
+            'Tenant Improvements'
+        ]
         validated_dict = {}
         
         for key in expected_keys:
@@ -448,6 +455,19 @@ def extract_lease_additional_terms_dict(response: str) -> Dict[str, Any]:
                         'description': entry.get('description', None)
                     })
                 
+                # Additional fields for Initial Direct Costs
+                elif key == 'Initial Direct Costs':
+                    validated_entry.update({
+                        'amount': entry.get('amount', None)
+                    })
+                
+                # Additional fields for Tenant Improvements
+                elif key == 'Tenant Improvements':
+                    validated_entry.update({
+                        'amount': entry.get('amount', None),
+                        'description': entry.get('description', None)
+                    })
+                
                 validated_dict[key] = validated_entry
             else:
                 # Create empty structure if key is missing
@@ -473,6 +493,15 @@ def extract_lease_additional_terms_dict(response: str) -> Dict[str, Any]:
                         'amount': None,
                         'description': None
                     })
+                elif key == 'Initial Direct Costs':
+                    base_structure.update({
+                        'amount': None
+                    })
+                elif key == 'Tenant Improvements':
+                    base_structure.update({
+                        'amount': None,
+                        'description': None
+                    })
                 
                 validated_dict[key] = base_structure
         
@@ -492,6 +521,14 @@ def extract_lease_additional_terms_dict(response: str) -> Dict[str, Any]:
                 'amount': None, 'description': None
             },
             'Rent Concessions': {
+                'value': None, 'proof': None, 'section': None,
+                'amount': None, 'description': None
+            },
+            'Initial Direct Costs': {
+                'value': None, 'proof': None, 'section': None,
+                'amount': None
+            },
+            'Tenant Improvements': {
                 'value': None, 'proof': None, 'section': None,
                 'amount': None, 'description': None
             }
