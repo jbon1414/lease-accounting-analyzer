@@ -21,7 +21,7 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
         11: {'C': incentives},
         12: {'C': prepaid_rent},
         13: {'C': payment_period},
-        14: {'C': classification}
+        14: {'C': classification.title()},
 
     }
     b_list=period_list
@@ -74,21 +74,21 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
             'D': t_c['terms_conditions_details']['Premise Description']['value'],
             },
         9: {
-            'C': "",
-            'D':classification, #TODO classification
-            }, #TODO classfication 
+            'C': "", #TODO classification proof
+            'D':classification, 
+            },
         10: {
-            'C': "",
+            'C': "", #TODO lease term 
             'D':lease_length
-            }, #TODO lease term 
+            },
         11: {
             'C': "",
             'D': "", #TODO lease execution date
-            }, #TODO lease execution date
+            }, 
         12: {
             'C': "",
-            'D': "",
-            }, #TODO commencement date
+            'D': measurement_date,
+            }, 
         13: {
             'C': t_c['terms_conditions_options']['Purchase Option']['section'],
             'D': t_c['terms_conditions_options']['Purchase Option']['value']+", "+t_c['terms_conditions_options']['Purchase Option']['proof'],
@@ -102,17 +102,17 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
             'D': t_c['terms_conditions_options']['Break Option']['value']+", "+t_c['terms_conditions_options']['Break Option']['proof'],
             },
         16: {
-            'C': "",
+            'C': "", #TODO Lease end section proof
             'D': end_date
-            }, #TODO Lease end section
+            },
         17: {
             'C': "",
             'D': "", #TODO adoption date    
-            }, #TODO adoption date
+            }, 
         18: {
             'C': "",
             'D': "", #TODO earlier of commencement or adoption date
-            }, #TODO earlier of commencement or adoption date
+            }, 
         19: {
             'C': t_c['terms_conditions_options']['Security Deposit']['section'],
             'D': t_c['terms_conditions_options']['Security Deposit']['value']+", "+t_c['terms_conditions_options']['Security Deposit']['proof'],
@@ -150,7 +150,7 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
             'C': t_c['terms_conditions_additional']['Brokerage Commissions']['section'],
             'D': t_c['terms_conditions_additional']['Brokerage Commissions']['value']+", "+t_c['terms_conditions_additional']['Brokerage Commissions']['proof'],
             'E': t_c['terms_conditions_additional']['Brokerage Commissions']['amount'],
-            }, #TODO: responsible party
+            }, #TODO: responsible party aspect
         28: {
             'C': t_c['terms_conditions_additional']['Lease Incentives']['section'],
             'D': t_c['terms_conditions_additional']['Lease Incentives']['value']+", "+t_c['terms_conditions_additional']['Lease Incentives']['proof'],
