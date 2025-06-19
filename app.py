@@ -80,7 +80,7 @@ if has_debt:
     )
     
     discount_rate = st.number_input(
-        "Company discount rate/Borrowing Rate (%)",
+        "Debt Interest Rate (%)",
         min_value=0.0,
         max_value=100.0,
         value=5.0,
