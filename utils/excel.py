@@ -54,33 +54,33 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
         for col_letter, value in updates.items():
             ws[f"{col_letter}{row_idx}"] = value
 
-    # ws_ibr = wb['IBR Analysis']
-    # if debt_df is None:
-    #     ibr_updates = {
-    #         16: {
-    #             'C': commencement_date,
-    #             'D': end_date,
-    #             'E': commencement_date,
-    #             'F': ibr_df['IBR'].iloc[3],
-    #             'G': commencement_date,
-    #             'H': ibr_df['IBR'].iloc[5],
-    #             'I': ibr_df['IBR'].iloc[6],
-    #             'J': ibr_df['IBR'].iloc[7],
-    #             'L': debt_df['Term (Years)'].iloc[0],
-    #             'M': debt_df['Term (Years)'].iloc[1],
-    #             'N': debt_df['Term (Years)'].iloc[2],
-    #             'O': debt_df['Term (Years)'].iloc[3],
-    #             'P': debt_df['Term (Years)'].iloc[4],
-    #             'Q': debt_df['Term (Years)'].iloc[5],
-    #             'R': debt_df['Term (Years)'].iloc[6],
-    #             'S': debt_df['Term (Years)'].iloc[7],
-    #             'T': debt_df['Term (Years)'].iloc[8],
-    #             'U': debt_df['Term (Years)'].iloc[9],
-    #             'V': debt_df['Company Risk-Free Rate'].iloc[0],
-    #             'W': debt_df['Company Risk-Free Rate'].iloc[1],
-    #             'X': debt_df['Company Risk-Free Rate'].iloc[2],
-    #             'Y': debt_df['Company Risk-Free Rate'].iloc[3]
-    #         },
+    ws_ibr = wb['IBR Analysis']
+    if debt_df is None:
+        ibr_updates = {
+            16: {
+                'C': measurement_date, #TODO: should be commencement date
+                'D': end_date,
+                'E': measurement_date,
+                'F': ibr_df['IBR'].iloc[3],
+                'G': measurement_date,
+                'H': ibr_df['IBR'].iloc[5],
+                'I': ibr_df['IBR'].iloc[6],
+                'J': ibr_df['IBR'].iloc[7],
+                'L': debt_df['Term (Years)'].iloc[0],
+                'M': debt_df['Term (Years)'].iloc[1],
+                'N': debt_df['Term (Years)'].iloc[2],
+                'O': debt_df['Term (Years)'].iloc[3],
+                'P': debt_df['Term (Years)'].iloc[4],
+                'Q': debt_df['Term (Years)'].iloc[5],
+                'R': debt_df['Term (Years)'].iloc[6],
+                'S': debt_df['Term (Years)'].iloc[7],
+                'T': debt_df['Term (Years)'].iloc[8],
+                'U': debt_df['Term (Years)'].iloc[9],
+                'V': debt_df['Company Risk-Free Rate'].iloc[0],
+                'W': debt_df['Company Risk-Free Rate'].iloc[1],
+                'X': debt_df['Company Risk-Free Rate'].iloc[2],
+                'Y': debt_df['Company Risk-Free Rate'].iloc[3]
+            },
     #         21: {
     #             'C': ibr_df['IBR'].iloc[0],
     #             'D': ibr_df['IBR'].iloc[1],
@@ -89,7 +89,10 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
     #             'G': ibr_df['IBR'].iloc[4],
     #             'H': ibr_df['IBR'].iloc[5]
     #         }
-    #     }
+        }
+        for row_idx, updates in ibr_updates.items():
+            for col_letter, value in updates.items():
+                ws_ibr[f"{col_letter}{row_idx}"] = value
     # else:
     
     ws_tc = wb['Lease T&C']
