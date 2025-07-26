@@ -4,6 +4,7 @@ import os
 
 def create_workbook(measurement_date, end_date, lease_length, discount_rate, classification, period_list, 
                     date_list, payment_list, t_c, ibr_df, debt_df=None, initial_direct_costs=0, incentives=0, prepaid_rent=0, payment_period='Beginning',
+                    lease_name=''
                     ):
     current_dir = os.path.dirname(__file__)
     excel_path = os.path.join(current_dir, 'Lease Template 2.0.xlsx')
@@ -94,6 +95,9 @@ def create_workbook(measurement_date, end_date, lease_length, discount_rate, cla
     ws_tc = wb['Lease T&C']
 
     t_c_updates = {
+        # 2: {
+        #     'A': lease_name
+        #     },
         5: {
             'C': t_c['terms_conditions_details']['Address']['section'],
             'D': t_c['terms_conditions_details']['Address']['value'],
