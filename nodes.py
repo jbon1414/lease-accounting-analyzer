@@ -80,16 +80,26 @@ def dates_node(state: State) -> State:
         """
     )
 
-    message = HumanMessage(content=prompt.format(
-        text=state["text"], 
-        rent_abatement=state["rent_abatement"]
-    ))
-    raw_response = llm.invoke([message]).content.strip()
+    max_retries = 2
+    for attempt in range(max_retries):
+        message = HumanMessage(content=prompt.format(
+            text=state["text"], 
+            rent_abatement=state["rent_abatement"]
+        ))
+        raw_response = llm.invoke([message]).content.strip()
+        dates_dict = parse_llm_response_to_dict(raw_response)
+        print(f"dates_dict (attempt {attempt+1}): {dates_dict}")
 
-    # Handle the dictionary response and ensure it is in the correct format
-    dates_dict = parse_llm_response_to_dict(raw_response)
-    print(dates_dict)
-    
+        # Check for blanks or "No information available"
+        blanks = [
+            dates_dict.get('start_date', '').lower() == 'no information available',
+            dates_dict.get('end_date', '').lower() == 'no information available',
+            dates_dict.get('commencement_date', '').lower() == 'no information available',
+            not dates_dict.get('payment_dates')
+        ]
+        if not any(blanks):
+            break
+
     return {'dates': dates_dict}
 
 
@@ -117,8 +127,10 @@ def discount_rate_node(state: State) -> State:
         )
     message = HumanMessage(content=prompt.format(text=state["text"]))
     discount_rate = float(llm.invoke([message]).content.strip())
+    print(f"Discount rate from LLM: {discount_rate}")
 
     if discount_rate == 0:
+        print(state['dates']['commencement_date'])
         discount_rate, treasure_df = calculate_discount_rate(
             state['dates']['commencement_date'], 
             len(state['dates']['payment_dates'])
