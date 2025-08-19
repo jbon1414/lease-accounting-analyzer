@@ -174,6 +174,9 @@ if st.button("Start Classification Process", type="primary"):
                                     result["discount_rate"], 
                                     has_debt=st.session_state['has_debt_processed'], 
                                     debt_data=st.session_state['debt_data_processed'])
+        
+        st.dataframe(ibr_df)
+        st.dataframe(debt_df)
 
         start_date_str = result['dates']['start_date']
         start_date = pd.to_datetime(start_date_str)
